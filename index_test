@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,9 +28,6 @@
             --accent-yellow: #ffbb33;
             --accent-blue: #3399ff;
             --accent-purple: #bb66ff;
-            --impact-high: #ff4466;
-            --impact-med: #ffbb33;
-            --impact-low: #3399ff;
         }
 
         body {
@@ -69,7 +67,7 @@
             50% { opacity: 0.8; }
         }
 
-        .live-indicator {
+        .connection-status {
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -78,12 +76,16 @@
             letter-spacing: 1px;
         }
 
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-red);
+        .status-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+            background: var(--accent-red);
             animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .status-dot.connected {
+            background: var(--accent-green);
         }
 
         @keyframes blink {
@@ -113,7 +115,7 @@
         .ticker-content {
             display: flex;
             gap: 4rem;
-            animation: scroll 45s linear infinite;
+            animation: scroll 60s linear infinite;
             white-space: nowrap;
         }
 
@@ -161,7 +163,6 @@
 
         .asset-up { color: var(--accent-green); }
         .asset-down { color: var(--accent-red); }
-        .asset-flat { color: var(--text-dim); }
 
         /* Main Grid */
         .main-grid {
@@ -205,7 +206,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Column Colors */
         .col-breaking .column-title { color: var(--accent-red); }
         .col-macro .column-title { color: var(--accent-blue); }
         .col-geo .column-title { color: var(--accent-purple); }
@@ -226,7 +226,6 @@
             padding: 1rem;
             margin-bottom: 1rem;
             animation: slideIn 0.4s ease-out;
-            position: relative;
             transition: all 0.3s ease;
         }
 
@@ -246,18 +245,15 @@
             }
         }
 
-        .card-new {
-            animation: flashBorder 2s ease-out;
-        }
-
-        @keyframes flashBorder {
-            0% { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
-            100% { border-color: var(--border); box-shadow: none; }
-        }
-
         .card-timestamp {
             font-size: 0.65rem;
             color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-source {
+            font-size: 0.7rem;
+            color: var(--accent-blue);
             margin-bottom: 0.5rem;
         }
 
@@ -281,6 +277,7 @@
             margin-bottom: 0.4rem;
         }
 
+        /* Card Meta */
         .card-meta {
             display: flex;
             gap: 1rem;
@@ -312,39 +309,6 @@
             display: flex;
             gap: 2px;
         }
-
-        /* Market Data Cards */
-        .market-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 0.75rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .market-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .market-value {
-            font-size: 1rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .market-change {
-            font-size: 0.7rem;
-            margin-top: 0.2rem;
-        }
-
-        .market-up { color: var(--accent-green); }
-        .market-down { color: var(--accent-red); }
-        .market-neutral { color: var(--text-dim); }
 
         /* Tripwire Section */
         .tripwire-section {
@@ -393,72 +357,38 @@
         .prob-up { color: var(--accent-green); }
         .prob-down { color: var(--accent-red); }
 
-        /* Hourly Segment Overlay */
-        .segment-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 14, 20, 0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .segment-overlay.active {
+        /* Market Cards */
+        .market-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .segment-content {
-            max-width: 1200px;
-            padding: 3rem;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .segment-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-green);
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-            letter-spacing: 2px;
-        }
-
-        .segment-list {
-            font-size: 1rem;
-            line-height: 2;
-            color: var(--text-primary);
-        }
-
-        .segment-list li {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-
-        .segment-implication {
-            color: var(--accent-green);
+        .market-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
             font-weight: 600;
         }
+
+        .market-value {
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .market-change {
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+        }
+
+        .market-up { color: var(--accent-green); }
+        .market-down { color: var(--accent-red); }
+        .market-neutral { color: var(--text-dim); }
 
         /* Scrollbar */
         .column-content::-webkit-scrollbar {
@@ -502,9 +432,9 @@
     <!-- Header -->
     <div class="header">
         <div class="logo">THE DAILY NUTHATCH // LIVE DESK</div>
-        <div class="live-indicator">
-            <div class="live-dot"></div>
-            <span>LIVE FEED</span>
+        <div class="connection-status">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">CONNECTING...</span>
         </div>
         <div class="time-display" id="currentTime">00:00:00 UTC</div>
     </div>
@@ -512,77 +442,58 @@
     <!-- Lower Third Ticker -->
     <div class="lower-third">
         <div class="ticker-content" id="tickerContent">
-            <!-- Ticker items will be generated by JS -->
+            <!-- Ticker items populated by JS -->
         </div>
     </div>
 
     <!-- Main Grid -->
     <div class="main-grid">
-        <!-- Column 1: Breaking Tick -->
         <div class="column col-breaking">
             <div class="column-header">
                 <div class="column-title">BREAKING TICK</div>
                 <div class="column-subtitle">Top events • Fastest feed</div>
             </div>
-            <div class="column-content" id="breakingColumn">
-                <!-- Content will be generated by JS -->
-            </div>
+            <div class="column-content" id="breakingColumn"></div>
         </div>
 
-        <!-- Column 2: Macro Plumbing -->
         <div class="column col-macro">
             <div class="column-header">
                 <div class="column-title">MACRO PLUMBING</div>
                 <div class="column-subtitle">Rates • Liquidity • Credit</div>
             </div>
-            <div class="column-content" id="macroColumn">
-                <!-- Content will be generated by JS -->
-            </div>
+            <div class="column-content" id="macroColumn"></div>
         </div>
 
-        <!-- Column 3: Geopolitics -->
         <div class="column col-geo">
             <div class="column-header">
                 <div class="column-title">GEOPOLITICS</div>
                 <div class="column-subtitle">State moves • Escalation</div>
             </div>
-            <div class="column-content" id="geoColumn">
-                <!-- Content will be generated by JS -->
-            </div>
+            <div class="column-content" id="geoColumn"></div>
         </div>
 
-        <!-- Column 4: Commodities -->
         <div class="column col-commodity">
             <div class="column-header">
                 <div class="column-title">COMMODITIES</div>
                 <div class="column-subtitle">Oil • Metals • Shipping</div>
             </div>
-            <div class="column-content" id="commodityColumn">
-                <!-- Content will be generated by JS -->
-            </div>
+            <div class="column-content" id="commodityColumn"></div>
         </div>
 
-        <!-- Column 5: Market Map -->
         <div class="column col-market">
             <div class="column-header">
                 <div class="column-title">MARKET MAP</div>
-                <div class="column-subtitle">Real-time asset snapshot</div>
+                <div class="column-subtitle">Real-time snapshot</div>
             </div>
-            <div class="column-content" id="marketColumn">
-                <!-- Content will be generated by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Hourly Segment Overlay -->
-    <div class="segment-overlay" id="segmentOverlay">
-        <div class="segment-content" id="segmentContent">
-            <!-- Segment content will be injected by JS -->
+            <div class="column-content" id="marketColumn"></div>
         </div>
     </div>
 
     <script>
-        // Time Display
+        // ========================================================================
+        // TIME DISPLAY
+        // ========================================================================
+        
         function updateTime() {
             const now = new Date();
             const utcString = now.toISOString().substr(11, 8);
@@ -591,19 +502,31 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Ticker Data
-        const tickerItems = [
-            { time: '14:23', text: "Fed's Waller signals pause preference", impact: 2, assets: 'DXY↓ YIELDS↓ GOLD↑' },
-            { time: '14:18', text: 'ECB cuts rates 25bp to 2.75%, guidance removed', impact: 3, assets: 'EUR↓ EQUITIES↑' },
-            { time: '14:12', text: 'Russia oil infrastructure hit, Brent lifted to $85', impact: 3, assets: 'OIL↑ INFLATION↑' },
-            { time: '14:05', text: 'Treasury announces $120B quarterly refunding', impact: 2, assets: 'YIELDS→ DXY→' },
-            { time: '13:58', text: 'China manufacturing PMI beats at 51.2', impact: 2, assets: 'COPPER↑ AUD↑' },
-            { time: '13:45', text: 'UK inflation unexpectedly jumps to 3.8%', impact: 2, assets: 'GBP↑ GILTS↓' }
-        ];
+        // ========================================================================
+        // TICKER DATA
+        // ========================================================================
+        
+        let tickerItems = [];
 
-        function generateTicker() {
+        function addToTicker(headline, impact, assets) {
+            const time = new Date().toISOString().substr(11, 5);
+            tickerItems.unshift({
+                time: time,
+                text: headline.substring(0, 100),
+                impact: impact,
+                assets: assets
+            });
+            
+            // Keep only last 20 items
+            if (tickerItems.length > 20) {
+                tickerItems = tickerItems.slice(0, 20);
+            }
+            
+            updateTicker();
+        }
+
+        function updateTicker() {
             const ticker = document.getElementById('tickerContent');
-            // Duplicate for seamless loop
             const doubled = [...tickerItems, ...tickerItems];
             
             ticker.innerHTML = doubled.map(item => `
@@ -615,236 +538,148 @@
                             `<div class="impact-dot ${i < item.impact ? 'active' : ''}"></div>`
                         ).join('')}
                     </div>
-                    <span class="ticker-assets">${item.assets}</span>
+                    <span class="ticker-assets">${item.assets || ''}</span>
                 </div>
             `).join('');
         }
 
-        // Breaking News Data
-        const breakingNews = [
-            {
-                time: '14:23',
-                headline: "Fed's Waller signals pause preference at current rates",
-                implications: [
-                    'Market repricing June cut probability from 45% to 65%',
-                    'Dollar bid softens as rate differential narrows vs ECB',
-                    'Risk assets rally on extended pause expectations'
-                ],
-                impact: 2,
-                horizon: 'DAYS',
-                tripwires: [
-                    'CPI print Wednesday >0.4% MoM reverses dovish narrative',
-                    'Fed funds futures testing 4.75% by June contract'
-                ],
-                probNudge: [
-                    { label: 'Risk-on', dir: 'up' },
-                    { label: 'Growth scare', dir: 'down' }
-                ]
-            },
-            {
-                time: '14:18',
-                headline: 'ECB cuts deposit rate 25bp to 2.75%, removes forward guidance',
-                implications: [
-                    'Euro funding costs ease, peripheral spreads compress',
-                    'EURUSD under pressure, testing 1.04 support',
-                    'Divergence with Fed policy widens, carry trades adjust'
-                ],
-                impact: 3,
-                horizon: 'NOW',
-                tripwires: [
-                    'EURUSD break below 1.0200 signals capital flight concerns',
-                    'Lagarde presser at 14:45 UTC for tone shift signals'
-                ],
-                probNudge: [
-                    { label: 'EUR weakness', dir: 'up' },
-                    { label: 'EU growth scare', dir: 'down' }
-                ]
-            },
-            {
-                time: '14:12',
-                headline: 'Multiple drone strikes reported on Russian oil infrastructure, Rostov region',
-                implications: [
-                    'If refineries offline >48hrs, diesel exports to EU tighten',
-                    'Brent already bid through $85, testing supply shock levels',
-                    'Kremlin response critical: escalation vs absorption'
-                ],
-                impact: 3,
-                horizon: 'NOW',
-                tripwires: [
-                    'Brent sustained above $87 confirms supply disruption fears',
-                    'NATO/US statement within 6 hours signals western read'
-                ],
-                probNudge: [
-                    { label: 'Inflation risk', dir: 'up' },
-                    { label: 'Oil supply risk', dir: 'up' }
-                ]
+        // ========================================================================
+        // WEBSOCKET CONNECTION
+        // ========================================================================
+        
+        let ws;
+        let reconnectInterval;
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                document.getElementById('statusDot').classList.add('connected');
+                document.getElementById('statusText').textContent = 'LIVE';
+                if (reconnectInterval) {
+                    clearInterval(reconnectInterval);
+                    reconnectInterval = null;
+                }
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    handleMessage(message);
+                } catch (error) {
+                    console.error('Error parsing message:', error);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                document.getElementById('statusDot').classList.remove('connected');
+                document.getElementById('statusText').textContent = 'RECONNECTING...';
+                
+                if (!reconnectInterval) {
+                    reconnectInterval = setInterval(connectWebSocket, 5000);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // ========================================================================
+        // MESSAGE HANDLERS
+        // ========================================================================
+
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'initial':
+                    handleInitialData(message);
+                    break;
+                case 'new_card':
+                    handleNewCard(message);
+                    break;
+                case 'market_update':
+                    updateMarketData(message.data);
+                    break;
+                case 'macro_update':
+                    updateMacroData(message.data);
+                    break;
             }
-        ];
+        }
 
-        // Macro Data
-        const macroData = [
-            {
-                time: '14:15',
-                headline: "Fed's reverse repo facility drops to $180B, lowest since 2021",
-                implications: [
-                    'Liquidity draining from system faster than expected',
-                    'Banks now dependent on Fed balance sheet for funding',
-                    'If Fed does not ease, funding stress possible by Q2'
-                ],
-                impact: 2,
-                horizon: 'WEEKS',
-                tripwires: [
-                    'SOFR spikes above 5.50% signals funding stress',
-                    '3-month Treasury bills pricing above Fed funds = stress'
-                ],
-                probNudge: [
-                    { label: 'Liquidity crisis', dir: 'up' },
-                    { label: 'Fed forced to ease', dir: 'up' }
-                ]
-            },
-            {
-                time: '13:58',
-                headline: 'Investment-grade credit spreads widen 15bp to 135bp over Treasuries',
-                implications: [
-                    'Corporate borrowing costs rising despite stable yields',
-                    'Credit markets pricing slowdown before equity markets',
-                    'High-yield spreads watching 400bp level closely'
-                ],
-                impact: 2,
-                horizon: 'DAYS',
-                tripwires: [
-                    'IG spreads above 150bp = recession signal historically',
-                    'HY spreads above 500bp = credit event warning'
-                ],
-                probNudge: [
-                    { label: 'Credit stress', dir: 'up' }
-                ]
+        function handleInitialData(message) {
+            if (message.market) {
+                updateMarketData(message.market);
             }
-        ];
-
-        // Geopolitics Data
-        const geoData = [
-            {
-                time: '14:12',
-                headline: 'Russia oil infrastructure targeted in coordinated drone strikes',
-                implications: [
-                    'Rostov refineries process 250k bpd, 8% of Russian capacity',
-                    'EU diesel imports at risk if damage sustained',
-                    'Escalation ladder: next step is response targeting or absorption'
-                ],
-                impact: 3,
-                horizon: 'NOW',
-                tripwires: [
-                    'Kremlin statement in next 4 hours sets tone',
-                    'Brent curve backwardation steepens = supply fears'
-                ],
-                probNudge: [
-                    { label: 'Escalation', dir: 'up' },
-                    { label: 'Energy shock', dir: 'up' }
-                ]
-            },
-            {
-                time: '13:45',
-                headline: 'China conducts military drills 35nm from Taiwan, largest in 6 months',
-                implications: [
-                    'Coincides with Taiwan president US visit announcement',
-                    'Show of force vs actual escalation remains unclear',
-                    'Semiconductor supply chain monitoring heightened'
-                ],
-                impact: 2,
-                horizon: 'DAYS',
-                tripwires: [
-                    'Drills within 12nm territorial waters = escalation',
-                    'TSMC guidance or production alerts = supply concern'
-                ],
-                probNudge: [
-                    { label: 'Taiwan risk', dir: 'up' }
-                ]
+            if (message.macro) {
+                updateMacroData(message.macro);
             }
-        ];
+        }
 
-        // Commodity Data
-        const commodityData = [
-            {
-                time: '14:20',
-                headline: 'Brent crude jumps $2.80 to $85.20 on Russia supply disruption fears',
-                implications: [
-                    'Breaking above key $85 resistance on geopolitical premium',
-                    'Curve in backwardation, near-term contracts bid higher',
-                    'If sustained above $87, inflation expectations reprice'
-                ],
-                impact: 3,
-                horizon: 'NOW',
-                tripwires: [
-                    '$90 Brent = Fed pivot less likely, inflation fears return',
-                    'WTI-Brent spread widening = US export surge likely'
-                ],
-                probNudge: [
-                    { label: 'Inflation', dir: 'up' },
-                    { label: 'Risk-off', dir: 'up' }
-                ]
-            },
-            {
-                time: '14:05',
-                headline: 'Copper rebounds to $4.20/lb on China PMI beat, LME inventories drop',
-                implications: [
-                    'China manufacturing data supports demand outlook',
-                    'Inventories down 12% in two weeks = supply tightness',
-                    'Proxy for global growth expectations improving'
-                ],
-                impact: 2,
-                horizon: 'DAYS',
-                tripwires: [
-                    'Copper below $4.00 = global growth warning',
-                    'Above $4.50 = reflation trade accelerating'
-                ],
-                probNudge: [
-                    { label: 'Growth', dir: 'up' }
-                ]
-            },
-            {
-                time: '13:52',
-                headline: 'Baltic Dry Index climbs 8% to 1,285 on increased grain shipments',
-                implications: [
-                    'Shipping rates firming after Q4 weakness',
-                    'Black Sea grain corridor stable despite tensions',
-                    'Early signal of manufacturing export pickup'
-                ],
-                impact: 1,
-                horizon: 'WEEKS',
-                tripwires: [
-                    'BDI below 1,000 = trade volumes collapsing',
-                    'Above 1,500 = strong global trade recovery'
-                ],
-                probNudge: []
+        function handleNewCard(message) {
+            const columnId = getColumnId(message.column);
+            const column = document.getElementById(columnId);
+            
+            if (!column) return;
+
+            const cardHtml = createCardHtml(message.data);
+            column.insertAdjacentHTML('afterbegin', cardHtml);
+
+            // Add to ticker
+            addToTicker(
+                message.data.headline, 
+                message.data.impact || 2,
+                formatAssets(message.data)
+            );
+
+            // Limit cards per column
+            const cards = column.querySelectorAll('.card');
+            if (cards.length > 12) {
+                cards[cards.length - 1].remove();
             }
-        ];
 
-        // Market Map Data
-        const marketData = [
-            { label: 'DXY', value: '106.24', change: '-0.18%', dir: 'down' },
-            { label: 'US 10Y', value: '4.382%', change: '-4bp', dir: 'down' },
-            { label: 'US 2Y', value: '4.621%', change: '-7bp', dir: 'down' },
-            { label: 'GOLD', value: '$2,245', change: '+$12', dir: 'up' },
-            { label: 'BRENT', value: '$85.20', change: '+$2.80', dir: 'up' },
-            { label: 'WTI', value: '$81.45', change: '+$2.35', dir: 'up' },
-            { label: 'S&P 500', value: '5,124', change: '+0.65%', dir: 'up' },
-            { label: 'NASDAQ', value: '16,089', change: '+0.88%', dir: 'up' },
-            { label: 'EURUSD', value: '1.0425', change: '-0.42%', dir: 'down' },
-            { label: 'USDJPY', value: '149.82', change: '-0.21%', dir: 'down' },
-            { label: 'GBPUSD', value: '1.2688', change: '+0.35%', dir: 'up' },
-            { label: 'VIX', value: '14.82', change: '-1.23', dir: 'down' },
-            { label: 'COPPER', value: '$4.20', change: '+2.1%', dir: 'up' },
-            { label: 'NATGAS', value: '$3.12', change: '+0.8%', dir: 'up' }
-        ];
+            column.scrollTop = 0;
+        }
 
-        // Render Functions
-        function renderCard(data) {
+        function formatAssets(data) {
+            // Simple asset formatter for ticker
+            if (data.probNudge && data.probNudge.length > 0) {
+                return data.probNudge.map(p => 
+                    `${p.label.toUpperCase()}${p.dir === 'up' ? '↑' : '↓'}`
+                ).join(' ');
+            }
+            return '';
+        }
+
+        function getColumnId(category) {
+            const mapping = {
+                'breaking': 'breakingColumn',
+                'macro': 'macroColumn',
+                'geo': 'geoColumn',
+                'commodity': 'commodityColumn',
+                'market': 'marketColumn'
+            };
+            return mapping[category] || 'breakingColumn';
+        }
+
+        function createCardHtml(data) {
             const impactDots = Array(3).fill(0).map((_, i) => 
-                `<div class="impact-dot ${i < data.impact ? 'active' : ''}"></div>`
+                `<div class="impact-dot ${i < (data.impact || 2) ? 'active' : ''}"></div>`
             ).join('');
 
-            const tripwireHtml = data.tripwires ? `
+            const sourceHtml = data.source ? 
+                `<div class="card-source">📡 ${data.source}${data.verified ? ' ✓' : ''}</div>` : '';
+            
+            const implicationsHtml = data.implications && data.implications.length > 0 ?
+                `<ul class="card-implications">
+                    ${data.implications.map(imp => `<li>${imp}</li>`).join('')}
+                </ul>` : '';
+
+            const tripwireHtml = data.tripwires && data.tripwires.length > 0 ? `
                 <div class="tripwire-section">
                     <div class="tripwire-title">⚠ TRIPWIRES</div>
                     ${data.tripwires.map(tw => `<div class="tripwire-item">• ${tw}</div>`).join('')}
@@ -865,12 +700,11 @@
             ` : '';
 
             return `
-                <div class="card card-new">
+                <div class="card">
                     <div class="card-timestamp">${data.time} UTC</div>
+                    ${sourceHtml}
                     <div class="card-headline">${data.headline}</div>
-                    <ul class="card-implications">
-                        ${data.implications.map(imp => `<li>${imp}</li>`).join('')}
-                    </ul>
+                    ${implicationsHtml}
                     <div class="card-meta">
                         <div class="meta-item">
                             <span class="meta-label">Impact:</span>
@@ -878,7 +712,7 @@
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Horizon:</span>
-                            <span class="meta-value">${data.horizon}</span>
+                            <span class="meta-value">${data.horizon || 'DAYS'}</span>
                         </div>
                     </div>
                     ${tripwireHtml}
@@ -887,151 +721,59 @@
             `;
         }
 
-        function renderMarketCard(data) {
-            return `
+        function updateMarketData(marketData) {
+            const marketColumn = document.getElementById('marketColumn');
+            
+            marketColumn.innerHTML = marketData.map(item => `
                 <div class="market-card">
                     <div>
-                        <div class="market-label">${data.label}</div>
-                        <div class="market-value ${data.dir === 'up' ? 'market-up' : data.dir === 'down' ? 'market-down' : 'market-neutral'}">
-                            ${data.value}
+                        <div class="market-label">${item.label}</div>
+                        <div class="market-value ${getMarketClass(item.dir)}">
+                            ${item.value}
                         </div>
-                        <div class="market-change ${data.dir === 'up' ? 'market-up' : data.dir === 'down' ? 'market-down' : 'market-neutral'}">
-                            ${data.change}
+                        <div class="market-change ${getMarketClass(item.dir)}">
+                            ${item.change}
                         </div>
                     </div>
                 </div>
-            `;
+            `).join('');
         }
 
-        // Initialize Columns
-        function initializeColumns() {
-            document.getElementById('breakingColumn').innerHTML = breakingNews.map(renderCard).join('');
-            document.getElementById('macroColumn').innerHTML = macroData.map(renderCard).join('');
-            document.getElementById('geoColumn').innerHTML = geoData.map(renderCard).join('');
-            document.getElementById('commodityColumn').innerHTML = commodityData.map(renderCard).join('');
-            document.getElementById('marketColumn').innerHTML = marketData.map(renderMarketCard).join('');
-        }
-
-        // Hourly Segments
-        const segments = [
-            {
-                title: 'TOP 5 CHANGES LAST HOUR',
-                content: [
-                    { text: 'ECB cuts rates, EUR weakens', implication: 'Divergence with Fed widens, carry trades adjust' },
-                    { text: 'Russia oil infrastructure hit', implication: 'Brent spikes, supply disruption fears' },
-                    { text: "Fed's Waller signals pause", implication: 'Markets reprice to dovish, risk-on rally' },
-                    { text: 'RRP facility hits $180B', implication: 'Liquidity drain accelerating, funding watch' },
-                    { text: 'Credit spreads widen 15bp', implication: 'Markets pricing slowdown before equities' }
-                ]
-            },
-            {
-                title: 'SCHEDULED CATALYSTS TODAY',
-                content: [
-                    { text: '08:30 EST - US CPI Print', implication: 'Exp +0.3% MoM, >0.4% = Fed pivot less likely' },
-                    { text: '10:00 EST - Treasury 10Y Auction $39B', implication: 'Tail >3bp = weak demand signal' },
-                    { text: '14:00 EST - Fed Bowman Speech', implication: 'Watch credit conditions commentary' },
-                    { text: '18:00 EST - API Crude Inventory', implication: 'Early read on supply ahead of EIA data' }
-                ]
-            },
-            {
-                title: 'SCENARIO BOARD',
-                content: [
-                    { text: 'BASE CASE (60%): Soft landing, Fed pause, stable growth', implication: 'Equities range, yields 4.2-4.5%' },
-                    { text: 'RISK-ON (25%): Data beats, easing fears fade', implication: 'Equities up, yields up, dollar up' },
-                    { text: 'RISK-OFF (15%): Credit event or growth shock', implication: 'Flight to safety, yields down' }
-                ]
-            }
-        ];
-
-        let currentSegment = 0;
-
-        function showSegment() {
-            const overlay = document.getElementById('segmentOverlay');
-            const content = document.getElementById('segmentContent');
-            const segment = segments[currentSegment];
-
-            content.innerHTML = `
-                <div class="segment-title">${segment.title}</div>
-                <ol class="segment-list">
-                    ${segment.content.map(item => `
-                        <li>
-                            ${item.text}
-                            <br><span class="segment-implication">→ ${item.implication}</span>
-                        </li>
-                    `).join('')}
-                </ol>
-            `;
-
-            overlay.classList.add('active');
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                currentSegment = (currentSegment + 1) % segments.length;
-            }, 8000);
-        }
-
-        // Add new items periodically
-        function addNewItem() {
-            const columns = ['breakingColumn', 'macroColumn', 'geoColumn', 'commodityColumn'];
-            const randomColumn = columns[Math.floor(Math.random() * columns.length)];
+        function updateMacroData(macroData) {
+            const macroColumn = document.getElementById('macroColumn');
             
-            const newItem = {
-                time: new Date().toISOString().substr(11, 5),
-                headline: 'Live Update: Market conditions evolving',
-                implications: [
-                    'Monitoring situation for material changes',
-                    'Cross-asset implications being assessed'
-                ],
-                impact: Math.floor(Math.random() * 3) + 1,
-                horizon: ['NOW', 'DAYS', 'WEEKS'][Math.floor(Math.random() * 3)],
-                tripwires: [],
-                probNudge: []
-            };
+            const macroHtml = macroData.map(item => `
+                <div class="market-card" style="border-left: 3px solid ${item.tripwireHit ? 'var(--accent-red)' : 'var(--border)'}">
+                    <div>
+                        <div class="market-label">${item.label}</div>
+                        <div class="market-value ${getMarketClass(item.dir)}">
+                            ${item.value}
+                        </div>
+                        <div class="market-change ${getMarketClass(item.dir)}">
+                            ${item.change}
+                        </div>
+                        ${item.tripwireHit ? '<div style="font-size:0.65rem;color:var(--accent-red);margin-top:0.25rem;">⚠ TRIPWIRE</div>' : ''}
+                    </div>
+                </div>
+            `).join('');
 
-            const column = document.getElementById(randomColumn);
-            column.insertAdjacentHTML('afterbegin', renderCard(newItem));
-
-            // Remove old items if too many
-            const cards = column.querySelectorAll('.card');
-            if (cards.length > 8) {
-                cards[cards.length - 1].remove();
-            }
+            // Keep existing cards below macro indicators
+            const existingCards = Array.from(macroColumn.querySelectorAll('.card')).map(c => c.outerHTML).join('');
+            macroColumn.innerHTML = macroHtml + existingCards;
         }
 
-        // Update market data
-        function updateMarketData() {
-            marketData.forEach(item => {
-                const change = (Math.random() - 0.5) * 0.5;
-                const currentValue = parseFloat(item.value.replace(/[^0-9.-]/g, ''));
-                const newValue = currentValue + change;
-                
-                if (item.label.includes('USD') || item.label.includes('EUR') || item.label.includes('GBP')) {
-                    item.value = newValue.toFixed(4);
-                } else if (item.label.includes('%')) {
-                    item.value = newValue.toFixed(3) + '%';
-                } else if (item.label.includes('$')) {
-                    item.value = '$' + newValue.toFixed(2);
-                } else {
-                    item.value = newValue.toFixed(2);
-                }
-
-                item.dir = change > 0 ? 'up' : change < 0 ? 'down' : 'neutral';
-                item.change = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
-            });
-
-            document.getElementById('marketColumn').innerHTML = marketData.map(renderMarketCard).join('');
+        function getMarketClass(dir) {
+            return dir === 'up' ? 'market-up' : 
+                   dir === 'down' ? 'market-down' : 
+                   'market-neutral';
         }
 
-        // Initialize
-        generateTicker();
-        initializeColumns();
+        // ========================================================================
+        // INITIALIZATION
+        // ========================================================================
 
-        // Start intervals
-        setInterval(showSegment, 15 * 60 * 1000); // Every 15 minutes
-        setTimeout(showSegment, 5000); // Show first segment after 5 seconds
-
-        setInterval(addNewItem, 45000); // Add new item every 45 seconds
-        setInterval(updateMarketData, 8000); // Update markets every 8 seconds
+        connectWebSocket();
     </script>
 </body>
 </html>
+
