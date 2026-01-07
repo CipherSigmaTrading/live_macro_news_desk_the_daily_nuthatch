@@ -116,6 +116,7 @@ async function pollNewsAPI() {
   }
 
   try {
+    // Business news for macro/markets
     const response = await axios.get('https://newsapi.org/v2/top-headlines', {
       params: {
         category: 'business',
@@ -149,9 +150,53 @@ async function pollNewsAPI() {
   }
 }
 
-async function processNewsArticle(article) {
+// Geopolitical news search
+async function pollGeopoliticalNews() {
+  if (!CONFIG.NEWSAPI_KEY) {
+    return;
+  }
+
   try {
-    const category = classifyNews(article.title + ' ' + (article.description || ''));
+    // Search for geopolitical keywords
+    const keywords = 'russia OR ukraine OR china OR taiwan OR iran OR israel OR military OR sanctions OR nato';
+    
+    const response = await axios.get('https://newsapi.org/v2/everything', {
+      params: {
+        q: keywords,
+        language: 'en',
+        sortBy: 'publishedAt',
+        pageSize: 10,
+        apiKey: CONFIG.NEWSAPI_KEY
+      },
+      timeout: 10000
+    });
+
+    if (response.data.articles) {
+      for (const article of response.data.articles.slice(0, 5)) {
+        const articleId = article.url;
+        
+        if (!seenArticles.has(articleId)) {
+          seenArticles.add(articleId);
+          
+          if (seenArticles.size > 1000) {
+            seenArticles.clear();
+          }
+          
+          // Force to geopolitics column
+          await processNewsArticle(article, 'geo');
+        }
+      }
+    }
+  } catch (error) {
+    if (error.response?.status !== 429) {
+      console.error('Geopolitical news error:', error.message);
+    }
+  }
+}
+
+async function processNewsArticle(article, forceCategory = null) {
+  try {
+    const category = forceCategory || classifyNews(article.title + ' ' + (article.description || ''));
     
     const cardData = {
       type: 'new_card',
@@ -217,24 +262,37 @@ function classifyNews(text) {
 
 async function fetchMarketData() {
   const symbols = [
+    // Dollar & US Yields
     'DX-Y.NYB',      // Dollar Index
     '^TNX',          // US 10Y
     '^TYX',          // US 30Y
     '^FVX',          // US 5Y
-    '^IRX',          // US 3M
+    '2YY=F',         // US 2Y (futures contract)
+    
+    // Precious Metals
     'GC=F',          // Gold
     'SI=F',          // Silver
     'PL=F',          // Platinum
+    
+    // Energy
     'CL=F',          // WTI
     'BZ=F',          // Brent
     'NG=F',          // NatGas
+    
+    // Base Metals
     'HG=F',          // Copper
+    
+    // Equities
     '^GSPC',         // S&P 500
     '^IXIC',         // NASDAQ
     '^DJI',          // Dow
-    'EURUSD=X',      // EUR/USD
-    'GBPUSD=X',      // GBP/USD
-    'USDJPY=X',      // USD/JPY
+    
+    // Forex (International Policy Proxies)
+    'USDJPY=X',      // USD/JPY (Japan BOJ policy)
+    'EURUSD=X',      // EUR/USD (ECB/Germany policy)
+    'GBPUSD=X',      // GBP/USD (UK BOE policy)
+    
+    // Volatility
     '^VIX'           // VIX
   ];
 
@@ -274,24 +332,37 @@ async function fetchMarketData() {
 
 function formatSymbolLabel(symbol) {
   const labels = {
+    // Dollar & US Yields
     'DX-Y.NYB': 'DXY',
     '^TNX': 'US 10Y',
     '^TYX': 'US 30Y',
     '^FVX': 'US 5Y',
-    '^IRX': 'US 3M',
+    '2YY=F': 'US 2Y',
+    
+    // Precious Metals
     'GC=F': 'GOLD',
     'SI=F': 'SILVER',
     'PL=F': 'PLATINUM',
+    
+    // Energy
     'CL=F': 'WTI',
     'BZ=F': 'BRENT',
     'NG=F': 'NATGAS',
+    
+    // Base Metals
     'HG=F': 'COPPER',
+    
+    // Equities
     '^GSPC': 'S&P 500',
     '^IXIC': 'NASDAQ',
     '^DJI': 'DOW',
-    'EURUSD=X': 'EURUSD',
-    'GBPUSD=X': 'GBPUSD',
-    'USDJPY=X': 'USDJPY',
+    
+    // Forex (International Policy Proxies)
+    'USDJPY=X': 'USD/JPY (BOJ)',
+    'EURUSD=X': 'EUR/USD (ECB)',
+    'GBPUSD=X': 'GBP/USD (BOE)',
+    
+    // Volatility
     '^VIX': 'VIX'
   };
   return labels[symbol] || symbol;
@@ -377,10 +448,16 @@ async function fetchMacroData() {
 // SCHEDULED JOBS
 // ============================================================================
 
-// News every 5 minutes
+// Business news every 5 minutes
 cron.schedule('*/5 * * * *', () => {
-  console.log('📰 Polling NewsAPI...');
+  console.log('📰 Polling NewsAPI (business)...');
   pollNewsAPI();
+});
+
+// Geopolitical news every 7 minutes (offset to avoid rate limits)
+cron.schedule('*/7 * * * *', () => {
+  console.log('🌍 Polling NewsAPI (geopolitics)...');
+  pollGeopoliticalNews();
 });
 
 // Market data every 15 seconds
@@ -419,16 +496,31 @@ server.listen(CONFIG.PORT, () => {
   🏦 FRED Data: ${CONFIG.FRED_API_KEY ? '✅ ENABLED' : '❌ DISABLED'}
   📊 Market Data: ✅ ENABLED
   
-  Assets monitored: 19 (US yields, precious metals, energy, equities, forex)
+  Assets: 19 live quotes
+  ├─ US Yields: 10Y, 30Y, 5Y, 2Y
+  ├─ Precious: Gold, Silver, Platinum  
+  ├─ Energy: WTI, Brent, NatGas
+  ├─ Equities: S&P, Nasdaq, Dow
+  ├─ Forex (Int'l Policy): USD/JPY (BOJ), EUR/USD (ECB), GBP/USD (BOE)
+  └─ Other: DXY, Copper, VIX
+  
+  News Sources:
+  ├─ Business/Macro (every 5 min)
+  └─ Geopolitics (every 7 min)
   
   Frontend: http://localhost:${CONFIG.PORT}
   `);
 
   // Initial data fetch
   setTimeout(() => {
-    console.log('📰 Initial NewsAPI fetch...');
+    console.log('📰 Initial NewsAPI fetch (business)...');
     pollNewsAPI();
   }, 3000);
+  
+  setTimeout(() => {
+    console.log('🌍 Initial NewsAPI fetch (geopolitics)...');
+    pollGeopoliticalNews();
+  }, 5000);
 });
 
 // Graceful shutdown
